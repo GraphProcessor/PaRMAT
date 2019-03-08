@@ -6,7 +6,8 @@
  ***************************************************************************/
 
 // If you wish to have graphs that will have more than around 4 billion vertices, you should change below definition to stand for a bigger type; unsigned long long for instance.
-using EdgeIndexType = unsigned int;
+//using EdgeIndexType = unsigned int;
+using EdgeIndexType = int32_t; // 2 billion at most
 
 // Set below property if you would like to add some small noise to distribution of R-MAT graph parameters: a, b, and c.
 static const bool ADD_NOISE_TO_RMAT_PARAMETERS_AT_EACH_LEVEL = false;

@@ -79,6 +79,9 @@ bool GraphGen_sorted::GenerateGraph(
 		const double RMAT_a, double RMAT_b, double RMAT_c,
 		const unsigned int nCPUWorkerThreads,
 		std::ofstream& outFile,
+		int outFileFD,
+		size_t& outFileEdgeNum,
+		Edge* outFileEdges,
 		const unsigned long long standardCapacity,
 		const bool allowEdgeToSelf,
 		const bool allowDuplicateEdges,
@@ -146,7 +149,9 @@ bool GraphGen_sorted::GenerateGraph(
 		// If any jobs left, main thread has to wait for the first worker thread and write the outcome before initiating any other worker thread.
 		for( ; recIdx < rectagnleVecs.size(); ++recIdx ) {
 			tasks_to_complete.at(0).get();
-			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFile);
+//			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFile);
+			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFileEdges, outFileEdgeNum);
+
 			progressBar();
 			tasks_to_complete.erase(tasks_to_complete.begin());
 			tasks_to_complete.push_back( std::async( std::launch::async, EachThreadGeneratesEdges,
@@ -157,7 +162,9 @@ bool GraphGen_sorted::GenerateGraph(
 		// Joining last threads.
 		for( auto& task: tasks_to_complete ) {
 			task.get();
-			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFile);
+//			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFile);
+			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFileEdges, outFileEdgeNum);
+
 			++recIdx;
 			progressBar();
 		}
@@ -183,7 +190,9 @@ bool GraphGen_sorted::GenerateGraph(
 		// If any jobs left, main thread has to wait for the first worker thread and write the outcome before initiating any other worker thread.
 		for( ; recIdx < rectagnleVecs.size(); ++recIdx ) {
 			threads.at(0).join();
-			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFile);
+//			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFile);
+			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFileEdges, outFileEdgeNum);
+
 			progressBar();
 			threads.erase(threads.begin());
 			threads.push_back( std::thread( EachThreadGeneratesEdges,
@@ -193,7 +202,8 @@ bool GraphGen_sorted::GenerateGraph(
 		// Joining last threads.
 		for( auto& t: threads ) {
 			t.join();
-			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFile);
+			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFileEdges, outFileEdgeNum);
+//			printEdgeGroup(std::ref(threads_edges[recIdx%nCPUWorkerThreads]), outFile);
 			++recIdx;
 			progressBar();
 		}

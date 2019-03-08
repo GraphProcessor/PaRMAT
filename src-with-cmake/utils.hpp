@@ -22,6 +22,7 @@ unsigned long long genEdgeIndex_FP( unsigned long long startIdx, unsigned long l
 
 void printEdgeGroupNoFlush( std::vector<Edge>& edges, std::ofstream& outFile );
 void printEdgeGroup( std::vector<Edge>& edges, std::ofstream& outFile );
+void printEdgeGroup(std::vector<Edge> &edges, Edge *output_edges, size_t &output_edge_num);
 
 bool edgeOverflow( std::vector<Square>& squares );
 

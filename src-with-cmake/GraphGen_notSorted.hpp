@@ -2,6 +2,7 @@
 #define GRAPH_GEN_NOT_SORTED_HPP
 
 #include <fstream>
+#include "Edge.hpp"
 
 
 namespace GraphGen_notSorted{
@@ -12,6 +13,9 @@ namespace GraphGen_notSorted{
 			const double a, const double b, const double c,
 			const unsigned int nCPUWorkerThreads,
 			std::ofstream& outFile,
+			int outFileFD,
+			size_t &outFileEdgeNum,
+			Edge *outFileEdges,
 			const unsigned long long standardCapacity,
 			const bool allowEdgeToSelf,
 			const bool allowDuplicateEdges,
