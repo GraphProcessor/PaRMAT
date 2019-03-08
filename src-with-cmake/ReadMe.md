@@ -1,5 +1,7 @@
 ## Usage
 
+* sorted and noDuplicateEdges is not satisfied. (do not know why currently)
+
 ```zsh
 
 ./PaRMAT -nVertices 100000 -nEdges 1000000 -output myout.txt -threads 4  -noEdgeToSelf -noDuplicateEdges -undirected -memUsage 0.5

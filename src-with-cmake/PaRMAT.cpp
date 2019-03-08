@@ -171,6 +171,7 @@ int main(int argc, char **argv) {
         static_assert(sizeof(Edge) == 8, "");
         auto *mmap_meta_cnt_ = (size_t *) mmap(nullptr, sizeof(size_t),
                                                PROT_READ | PROT_WRITE, MAP_SHARED, outFileFD, 0);
+        *mmap_meta_cnt_ = 0;
         auto *mmap_edges = static_cast<Edge *>(mmap(nullptr, max_size,
                                                     PROT_READ | PROT_WRITE, MAP_SHARED, outFileFD, 0)) + 1;
 
