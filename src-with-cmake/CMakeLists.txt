@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 include_directories(.)
 
 find_package(Threads REQUIRED)
+add_definitions("-DUSE_LOG=1")
 
 add_compile_options(-O3 -Wall -c -fmessage-length=0 -g)
 add_executable(PaRMAT
@@ -22,7 +23,8 @@ add_executable(PaRMAT
         Square.hpp
         threadsafe_queue.hpp
         utils.cpp
-        utils.hpp)
+        utils.hpp
+        util/log.cpp util/log.h)
 
 target_link_libraries(PaRMAT PRIVATE ${CMAKE_THREAD_LIBS_INIT})
 

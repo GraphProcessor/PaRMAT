@@ -14,13 +14,19 @@
 #include <algorithm>
 #include <thread>
 #include <mutex>
+#include <chrono>
 
 #include "GraphGen_sorted.hpp"
 #include "GraphGen_notSorted.hpp"
 #include "utils.hpp"
 #include "internal_config.hpp"
 
+#include "util/log.h"
+
 std::string out_file_dir;
+
+using namespace std;
+using namespace std::chrono;
 
 void openFileToWrite(std::ofstream &input_file, const char *file_name) {
     input_file.open(file_name);
@@ -162,9 +168,8 @@ int main(int argc, char **argv) {
 
         // Start the work.
         --nVertices;
-        int outFileFD = -1;
 #define FILE_PRIVILEGE (0644)
-        outFileFD = open((out_file_dir + "/undir_edge_list.bin").c_str(), O_RDWR | O_CREAT, FILE_PRIVILEGE);
+        int outFileFD = open((out_file_dir + "/undir_edge_list.bin").c_str(), O_RDWR | O_CREAT, FILE_PRIVILEGE);
         size_t max_size = static_cast<size_t >(20) * 1024 * 1024 * 1024 + 4096;
         ftruncate(outFileFD, max_size);
         static_assert(sizeof(size_t) == 8, "");
@@ -175,6 +180,7 @@ int main(int argc, char **argv) {
         auto *mmap_edges = static_cast<Edge *>(mmap(nullptr, max_size,
                                                     PROT_READ | PROT_WRITE, MAP_SHARED, outFileFD, 0)) + 1;
 
+        auto clk_beg = high_resolution_clock::now();
         auto fOutcome = sorted ?
                         GraphGen_sorted::GenerateGraph(nEdges, nVertices, a, b, c, nCPUWorkerThreads, outf,
                                                        outFileFD, *mmap_meta_cnt_, mmap_edges,
@@ -185,6 +191,9 @@ int main(int argc, char **argv) {
                                                           standardCapacity, allowEdgeToSelf,
                                                           allowDuplicateEdges,
                                                           directedGraph);
+        auto clk_end = high_resolution_clock::now();
+        log_info("total time: %.3lf s",
+                 duration_cast<milliseconds>(clk_end - clk_beg).count() / 1000.0);
 
         if (fOutcome == EXIT_FAILURE) {
             std::cerr << "Exiting." << std::endl;
